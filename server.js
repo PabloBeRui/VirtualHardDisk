@@ -1,9 +1,11 @@
 require("dotenv").config();
+const { newProfileFolder } = require("./helpers");
 const express = require("express");
 const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
 const isAuth = require("./middlewares/isAuth");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
@@ -30,12 +32,22 @@ app.use(
 //MW Morgan
 app.use(morgan("dev"));
 
+//MW para servir archivos estaticos
+app.use(express.static(path.join(__dirname, "profilePhotos")));
+
+newProfileFolder();
+
 /**
  * ###############################
  * ## Controladores Users       ##
  * ###############################
  */
-const { newUser, loginUser, editUser } = require("./controllers/users/index");
+const {
+  newUser,
+  loginUser,
+  editUser,
+  getUser,
+} = require("./controllers/users/index");
 
 //Ruta para nuevo usuario
 app.post("/users", newUser);
@@ -45,6 +57,9 @@ app.post("/users/login", loginUser);
 
 //Ruta para editar usuario
 app.patch("/users/edit", isAuth, editUser);
+
+// Obtener info de un usuario.
+app.get("/users/:idUser", isAuth, getUser);
 
 /**
  * ###############################
