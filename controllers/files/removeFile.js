@@ -8,10 +8,10 @@ const removeFile = async (req, res, next) => {
   try {
     const user = req.user;
     const { fileId } = req.params;
-    const { folderName } = req.body;
+    let { folderName } = req.body;
 
     const fileName = await getFileById(fileId, user.id);
-    if (!folderName) {
+    if (folderName === "Home") {
       try {
         const removePath = path.join(
           __dirname,
